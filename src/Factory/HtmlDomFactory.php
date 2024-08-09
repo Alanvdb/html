@@ -2,10 +2,11 @@
 
 namespace AlanVdb\Html\Factory;
 
+use AlanVdb\Html\Definition\HtmlDomFactoryInterface;
 use AlanVdb\Html\Definition\HtmlDomInterface;
 use AlanVdb\Html\HtmlDom;
 
-class HtmlDomFactory
+class HtmlDomFactory implements HtmlDomFactoryInterface
 {
     /**
      * Creates a new instance of HtmlDom with the provided HTML content.
