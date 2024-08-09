@@ -97,9 +97,7 @@ class HtmlDomTest extends TestCase
 
     public function testQuerySelectorNotFound(): void
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage("No element matching selector '.nonexistent' found.");
-        $this->dom->querySelector('.nonexistent');
+        $this->assertNull($this->dom->querySelector('.nonexistent'));
     }
 
     public function testQuerySelectorAll(): void

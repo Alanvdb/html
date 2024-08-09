@@ -52,14 +52,13 @@ trait HtmlDomQueryTrait
      *
      * @param string $selector The CSS selector.
      * @return HtmlDomElementInterface|null The matching element, or null if not found.
-     * @throws Exception If no element matching the selector is found.
      */
     public function querySelector(string $selector): ?HtmlDomElementInterface
     {
         $xpathQuery = $this->cssToXPath($selector);
         $elements = $this->xpath->query($xpathQuery, $this->getElement());
         if ($elements === false || $elements->length === 0) {
-            throw new Exception("No element matching selector '$selector' found.");
+            return null;
         }
         return new HtmlDomElement($elements->item(0));
     }
