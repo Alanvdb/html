@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use AlanVdb\Html\HtmlDom;
 use AlanVdb\Html\HtmlDomElement;
 use PHPUnit\Framework\TestCase;
 
@@ -78,6 +79,19 @@ class HtmlDomElementTest extends TestCase
         $children = $this->element->getChildNodes();
         $this->assertCount(1, $children);
         $this->assertEquals('Hello', $children[0]->getInnerHtml());
+    }
+
+    public function testGetInnerText()
+    {
+        $html = '<div><p>Hello <span>World</span></p><p>Another paragraph</p></div>';
+
+        $dom = new HtmlDom($html);
+        $element = $dom->getElementsByTagName('div')[0];
+        
+        $innerText = $element->getInnerText();
+        
+        $expectedText = "Hello WorldAnother paragraph";
+        $this->assertEquals($expectedText, $innerText);
     }
 
     public function testInsertBefore(): void

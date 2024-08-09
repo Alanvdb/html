@@ -25,7 +25,7 @@ class HtmlDomElement implements HtmlDomElementInterface
      * @param DOMElement $element The DOMElement instance.
      * @param HtmlDomElementInterface|null $parent The parent element, if any.
      */
-    public function __construct(DOMElement $element, HtmlDomElementInterface $parent = null)
+    public function __construct(DOMElement $element, ?HtmlDomElementInterface $parent = null)
     {
         $this->element = $element;
         $this->parent = $parent;
@@ -71,6 +71,16 @@ class HtmlDomElement implements HtmlDomElementInterface
             $innerHTML .= $this->element->ownerDocument->saveHTML($child);
         }
         return $innerHTML;
+    }
+
+    /**
+     * Returns the inner text of this element.
+     *
+     * @return string The inner text of this element.
+     */
+    public function getInnerText(): string
+    {
+        return $this->element->textContent;
     }
 
     /**

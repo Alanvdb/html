@@ -36,6 +36,13 @@ interface HtmlDomElementInterface
     public function getInnerHtml(): string;
 
     /**
+     * Returns the inner text of this element.
+     *
+     * @return string The inner text of this element.
+     */
+    public function getInnerText(): string;
+
+    /**
      * Inserts HTML at a specified position relative to the current element.
      *
      * @param string $position The position relative to the element (e.g., 'beforebegin', 'afterbegin', 'beforeend', 'afterend').
