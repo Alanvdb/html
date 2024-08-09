@@ -1,0 +1,22 @@
+{
+    "name": "alanvdb/html",
+    "description": "HTML document oriented PHP library",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^11.3"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "AlanVdb\\Html\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "alanvdb",
+            "email": "alanvdb.coder@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
