@@ -4,14 +4,16 @@ namespace AlanVdb\Html;
 
 use AlanVdb\Html\Definition\HtmlDomInterface;
 use AlanVdb\Html\Definition\HtmlDomElementInterface;
+use AlanVdb\Html\Common\HtmlDomQueryTrait;
 use Exception;
 use DOMDocument;
 use DOMXPath;
 
 class HtmlDom implements HtmlDomInterface
 {
+    use HtmlDomQueryTrait;
+
     protected DOMDocument $dom;
-    protected DOMXPath $xpath;
 
     /**
      * Initializes the DOMDocument and loads the provided HTML.
@@ -28,7 +30,7 @@ class HtmlDom implements HtmlDomInterface
         $this->dom->loadHTML($html);
 
         libxml_use_internal_errors(false);
-        $this->xpath = new DOMXPath($this->dom);
+        $this->setXPath(new DOMXPath($this->dom));  // Initialisation du DOMXPath dans le trait
     }
 
     /**
@@ -80,43 +82,6 @@ class HtmlDom implements HtmlDomInterface
     }
 
     /**
-     * Retrieves the first element that matches the specified CSS selector.
-     *
-     * @param string $selector The CSS selector to match elements against.
-     * @return HtmlDomElementInterface The first element that matches the selector.
-     * @throws Exception If no element matching the selector is found.
-     */
-    public function querySelector(string $selector): HtmlDomElementInterface
-    {
-        $xpathQuery = $this->cssToXPath($selector);
-        $elements = $this->xpath->query($xpathQuery);
-        if ($elements === false || $elements->length === 0) {
-            throw new Exception("No element matching selector '$selector' found.");
-        }
-        return new HtmlDomElement($elements->item(0));
-    }
-
-    /**
-     * Retrieves all elements that match the specified CSS selector.
-     *
-     * @param string $selector The CSS selector to match elements against.
-     * @return HtmlDomElementInterface[] An array of elements that match the selector.
-     */
-    public function querySelectorAll(string $selector): array
-    {
-        $xpathQuery = $this->cssToXPath($selector);
-        $elements = $this->xpath->query($xpathQuery);
-        if ($elements === false) {
-            return [];
-        }
-        $result = [];
-        foreach ($elements as $element) {
-            $result[] = new HtmlDomElement($element);
-        }
-        return $result;
-    }
-
-    /**
      * Creates a new element with the specified tag name.
      *
      * @param string $tagName The tag name of the element to create.
@@ -129,22 +94,12 @@ class HtmlDom implements HtmlDomInterface
     }
 
     /**
-     * Converts a CSS selector into an XPath query.
+     * Returns the root DOMNode (the entire document).
      *
-     * @param string $selector The CSS selector to convert.
-     * @return string The corresponding XPath query.
-     * @throws Exception If the selector format is unsupported.
+     * @return \DOMNode
      */
-    protected function cssToXPath(string $selector): string
+    protected function getElement(): \DOMNode
     {
-        if (preg_match('/^#([\w\-]+)$/', $selector, $matches)) {
-            return "//*[@id='{$matches[1]}']";
-        } elseif (preg_match('/^\.([\w\-]+)$/', $selector, $matches)) {
-            return "//*[contains(concat(' ', normalize-space(@class), ' '), ' {$matches[1]} ')]";
-        } elseif (preg_match('/^[\w\-]+$/', $selector)) {
-            return "//{$selector}";
-        } else {
-            throw new Exception("Unsupported selector format: $selector");
-        }
+        return $this->dom->documentElement;
     }
 }

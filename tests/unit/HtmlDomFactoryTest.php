@@ -24,12 +24,16 @@ class HtmlDomFactoryTest extends TestCase
 
         $this->assertInstanceOf(HtmlDomInterface::class, $htmlDom);
         $this->assertInstanceOf(HtmlDom::class, $htmlDom);
+
+        $paragraph = $htmlDom->querySelector('p');
+        $this->assertNotNull($paragraph);
+        $this->assertEquals('Hello World', $paragraph->getInnerHtml());
     }
 
     public function testCreateHtmlDomWithEmptyString(): void
     {
         $this->expectException(ValueError::class);
-        $this->expectExceptionMessage("DOMDocument::loadHTML(): Argument #1 (\$source) must not be empty");
+        $this->expectExceptionMessageMatches('/Argument #1 \(\$source\) must not be empty/');
 
         $this->factory->createHtmlDom('');
     }

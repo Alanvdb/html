@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 use AlanVdb\Html\HtmlDomElement;
 use PHPUnit\Framework\TestCase;
 
 class HtmlDomElementTest extends TestCase
 {
-    protected $element;
+    protected HtmlDomElement $element;
 
     protected function setUp(): void
     {
@@ -14,7 +14,7 @@ class HtmlDomElementTest extends TestCase
         $this->element = new HtmlDomElement($doc->getElementById('test'));
     }
 
-    public function testAppendChild()
+    public function testAppendChild(): void
     {
         $newElement = $this->element->getElement()->ownerDocument->createElement('span', 'New Child');
         $wrappedElement = new HtmlDomElement($newElement);
@@ -22,27 +22,28 @@ class HtmlDomElementTest extends TestCase
         $this->element->appendChild($wrappedElement);
 
         $this->assertStringContainsString('<span>New Child</span>', $this->element->getInnerHtml());
+        $this->assertSame($this->element, $wrappedElement->getParent());
     }
 
-    public function testSetAttribute()
+    public function testSetAttribute(): void
     {
         $this->element->setAttribute('data-test', 'value');
         $this->assertEquals('value', $this->element->getAttribute('data-test'));
     }
 
-    public function testAddClass()
+    public function testAddClass(): void
     {
         $this->element->addClass('new-class');
         $this->assertEquals('initial new-class', $this->element->getAttribute('class'));
     }
 
-    public function testRemoveClass()
+    public function testRemoveClass(): void
     {
         $this->element->removeClass('initial');
         $this->assertEquals('', $this->element->getAttribute('class'));
     }
 
-    public function testToggleClass()
+    public function testToggleClass(): void
     {
         // Test to remove the class "initial"
         $this->element->toggleClass('initial');
@@ -51,9 +52,13 @@ class HtmlDomElementTest extends TestCase
         // Test to add the class "new-class"
         $this->element->toggleClass('new-class');
         $this->assertEquals('new-class', $this->element->getAttribute('class'));
+
+        // Test to remove the class "new-class" again
+        $this->element->toggleClass('new-class');
+        $this->assertEquals('', $this->element->getAttribute('class'));
     }
 
-    public function testGetParent()
+    public function testGetParent(): void
     {
         $doc = new DOMDocument();
 
@@ -68,14 +73,14 @@ class HtmlDomElementTest extends TestCase
         $this->assertSame($parentDomElement, $childDomElement->getParent());
     }
 
-    public function testGetChildNodes()
+    public function testGetChildNodes(): void
     {
         $children = $this->element->getChildNodes();
         $this->assertCount(1, $children);
         $this->assertEquals('Hello', $children[0]->getInnerHtml());
     }
 
-    public function testInsertBefore()
+    public function testInsertBefore(): void
     {
         $doc = new DOMDocument();
         $doc->loadHTML('<div><p>First</p><p id="second">Second</p></div>');
@@ -87,9 +92,10 @@ class HtmlDomElementTest extends TestCase
         $parentElement->insertBefore($newElement, $referenceElement);
 
         $this->assertStringContainsString('<p>Inserted</p><p id="second">Second</p>', $parentElement->getInnerHtml());
+        $this->assertSame($parentElement, $newElement->getParent());
     }
 
-    public function testInsertAdjacentHTML()
+    public function testInsertAdjacentHTML(): void
     {
         $this->element->insertAdjacentHTML('beforeend', '<span>Adjacent</span>');
         $this->assertStringContainsString('<p>Hello</p><span>Adjacent</span>', $this->element->getInnerHtml());
@@ -104,36 +110,37 @@ class HtmlDomElementTest extends TestCase
         $this->assertStringContainsString('</div><span>After</span>', $this->element->getElement()->ownerDocument->saveHTML());
     }
 
-    public function testRemoveAttribute()
+    public function testRemoveAttribute(): void
     {
         $this->element->setAttribute('data-test', 'value');
         $this->element->removeAttribute('data-test');
         $this->assertEquals('', $this->element->getAttribute('data-test'));
     }
 
-    public function testRemoveChild()
+    public function testRemoveChild(): void
     {
         $child = $this->element->getChildNodes()[0];
         $this->element->removeChild($child);
 
         $this->assertStringNotContainsString('<p>Hello</p>', $this->element->getInnerHtml());
+        $this->assertNull($child->getParent());
     }
 
-    public function testGetFirstChild()
+    public function testGetFirstChild(): void
     {
         $firstChild = $this->element->getFirstChild();
         $this->assertInstanceOf(HtmlDomElement::class, $firstChild);
         $this->assertEquals('Hello', $firstChild->getInnerHtml());
     }
 
-    public function testGetLastChild()
+    public function testGetLastChild(): void
     {
         $lastChild = $this->element->getLastChild();
         $this->assertInstanceOf(HtmlDomElement::class, $lastChild);
         $this->assertEquals('Hello', $lastChild->getInnerHtml());
     }
 
-    public function testGetNextSibling()
+    public function testGetNextSibling(): void
     {
         $doc = new DOMDocument();
         $doc->loadHTML('<div><p id="first">First</p><p id="second">Second</p></div>');
@@ -144,7 +151,7 @@ class HtmlDomElementTest extends TestCase
         $this->assertEquals('Second', $nextSibling->getInnerHtml());
     }
 
-    public function testGetPreviousSibling()
+    public function testGetPreviousSibling(): void
     {
         $doc = new DOMDocument();
         $doc->loadHTML('<div><p id="first">First</p><p id="second">Second</p></div>');
@@ -155,13 +162,13 @@ class HtmlDomElementTest extends TestCase
         $this->assertEquals('First', $previousSibling->getInnerHtml());
     }
 
-    public function testRemove()
+    public function testRemove(): void
     {
         $this->element->remove();
         $this->assertStringNotContainsString('<div id="test"', $this->element->getElement()->ownerDocument->saveHTML());
     }
 
-    public function testGetElement()
+    public function testGetElement(): void
     {
         $this->assertInstanceOf(DOMElement::class, $this->element->getElement());
     }
