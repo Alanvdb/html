@@ -3,20 +3,20 @@
 namespace AlanVdb\Html;
 
 use AlanVdb\Html\Definition\HtmlDomElementInterface;
-use DOMElement;
+use DOMNode;
 
 class HtmlDomElement implements HtmlDomElementInterface
 {
-    protected DOMElement $element;
+    protected DOMNode $element;
     protected ?HtmlDomElementInterface $parent;
 
     /**
      * Initializes the HtmlDomElement with a DOMElement and an optional parent.
      *
-     * @param DOMElement $element The DOM element to wrap.
+     * @param DOMNode $element The DOM element to wrap.
      * @param HtmlDomElementInterface|null $parent The parent element, if any.
      */
-    public function __construct(DOMElement $element, HtmlDomElementInterface $parent = null)
+    public function __construct(DOMNode $element, HtmlDomElementInterface $parent = null)
     {
         $this->element = $element;
         $this->parent = $parent;
@@ -222,7 +222,7 @@ class HtmlDomElement implements HtmlDomElementInterface
     {
         $children = [];
         foreach ($this->element->childNodes as $child) {
-            if ($child instanceof DOMElement) {
+            if ($child instanceof DOMNode) {
                 $children[] = new HtmlDomElement($child, $this);
             }
         }
@@ -237,7 +237,7 @@ class HtmlDomElement implements HtmlDomElementInterface
     public function getFirstChild() : ?HtmlDomElementInterface
     {
         $firstChild = $this->element->firstChild;
-        return $firstChild instanceof DOMElement ? new HtmlDomElement($firstChild, $this) : null;
+        return $firstChild instanceof DOMNode ? new HtmlDomElement($firstChild, $this) : null;
     }
 
     /**
@@ -248,7 +248,7 @@ class HtmlDomElement implements HtmlDomElementInterface
     public function getLastChild() : ?HtmlDomElementInterface
     {
         $lastChild = $this->element->lastChild;
-        return $lastChild instanceof DOMElement ? new HtmlDomElement($lastChild, $this) : null;
+        return $lastChild instanceof DOMNode ? new HtmlDomElement($lastChild, $this) : null;
     }
 
     /**
@@ -259,7 +259,7 @@ class HtmlDomElement implements HtmlDomElementInterface
     public function getNextSibling() : ?HtmlDomElementInterface
     {
         $nextSibling = $this->element->nextSibling;
-        return $nextSibling instanceof DOMElement ? new HtmlDomElement($nextSibling, $this->parent) : null;
+        return $nextSibling instanceof DOMNode ? new HtmlDomElement($nextSibling, $this->parent) : null;
     }
 
     /**
@@ -270,15 +270,15 @@ class HtmlDomElement implements HtmlDomElementInterface
     public function getPreviousSibling() : ?HtmlDomElementInterface
     {
         $previousSibling = $this->element->previousSibling;
-        return $previousSibling instanceof DOMElement ? new HtmlDomElement($previousSibling, $this->parent) : null;
+        return $previousSibling instanceof DOMNode ? new HtmlDomElement($previousSibling, $this->parent) : null;
     }
 
     /**
      * Gets the underlying DOMElement.
      *
-     * @return DOMElement The DOMElement wrapped by this class.
+     * @return DOMNode The DOMElement wrapped by this class.
      */
-    public function getElement(): DOMElement
+    public function getElement(): DOMNode
     {
         return $this->element;
     }
