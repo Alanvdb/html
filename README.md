@@ -1,178 +1,109 @@
-# HTML Library
-
-A PHP library for manipulating and querying HTML documents.
+# AlanVdb / HTML Library
 
 ## Overview
 
-This project provides a lightweight and efficient PHP library for working with HTML documents. It offers an intuitive API for querying, manipulating, and creating HTML elements, enabling developers to interact with HTML content programmatically. The main components of this library include:
+`alanvdb/html` is a PHP library designed for working with HTML documents in a structured and object-oriented way. It provides an easy-to-use API for querying, manipulating, and creating HTML elements, enabling you to build and manage HTML documents programmatically.
 
-- **HtmlDom**: A class that represents an HTML document and provides methods for querying and manipulating its content.
-- **HtmlDomElement**: A class that represents an HTML element and provides methods for manipulating individual elements within the document.
-- **HtmlDomFactory**: A factory class for creating instances of `HtmlDom`.
+## Features
+
+- **Object-Oriented HTML Manipulation**: Interact with HTML elements using a simple and intuitive object-oriented API.
+- **XPath Support**: Use XPath selectors for advanced querying of HTML elements.
+- **Element Creation and Insertion**: Easily create, append, insert, and remove HTML elements.
+- **CSS Selector Support**: Query elements using familiar CSS selectors.
+- **Factory Pattern**: Leverage factory patterns for easy instantiation and dependency management.
+- **Flexible and Extendable**: Designed to be extended and customized to meet specific project requirements.
 
 ## Installation
 
-To install the `alanvdb/html` library, you can use Composer:
+You can install this package via Composer:
 
 ```bash
 composer require alanvdb/html
 ```
 
+For development purposes, you can install the development dependencies as well:
+
+```bash
+composer install --dev
+```
+
 ## Usage
 
-### HtmlDom
+### Basic Usage
 
-The `HtmlDom` class allows you to load an HTML document and perform various operations such as querying elements by ID, class, or tag name, and selecting elements using CSS selectors.
-
-#### Example
+Here is an example of how to use the `HtmlDom` class to load an HTML document and manipulate its elements:
 
 ```php
+require 'vendor/autoload.php';
+
 use AlanVdb\Html\HtmlDom;
 
-$htmlContent = '<div id="container" class="main"><p class="text">Hello World</p></div>';
+// Load HTML content
+$htmlContent = '<div id="main"><p class="text">Hello World!</p></div>';
 $dom = new HtmlDom($htmlContent);
 
-$element = $dom->getElementById('container');
-echo $element->getInnerHtml(); // Outputs: <p class="text">Hello World</p>
+// Query an element by ID
+$element = $dom->getElementById('main');
+echo $element->getInnerHtml(); // Outputs: <p class="text">Hello World!</p>
 ```
 
-### HtmlDomElement
+### Querying Elements
 
-The `HtmlDomElement` class represents an individual HTML element and provides methods for manipulating it, such as setting attributes, adding/removing classes, and appending child elements.
-
-#### Example
+You can query elements using CSS selectors or by their attributes:
 
 ```php
-use AlanVdb\Html\HtmlDomElement;
+// Get elements by class name
+$paragraphs = $dom->getElementsByClassName('text');
 
-$element = new HtmlDomElement($dom->getElementById('container'));
+// Get elements by tag name
+$divs = $dom->getElementsByTagName('div');
 
-$element->addClass('new-class');
-$element->setAttribute('data-attr', 'value');
-
-echo $element->getAttribute('class'); // Outputs: main new-class
+// Query using CSS selectors
+$firstParagraph = $dom->querySelector('.text');
+$allParagraphs = $dom->querySelectorAll('p');
 ```
 
-### HtmlDomFactory
+### Manipulating Elements
 
-The `HtmlDomFactory` class provides a convenient way to create instances of `HtmlDom`. This factory can be used to standardize the creation of HTML documents in larger applications.
+Create, insert, and manipulate HTML elements easily:
 
-#### Example
+```php
+// Create a new element
+$newDiv = $dom->createElement('div');
+$newDiv->setAttribute('id', 'new-div');
+
+// Append the new element to an existing one
+$element->appendChild($newDiv);
+
+// Insert HTML content
+$newDiv->insertAdjacentHTML('beforeend', '<p>New paragraph inside new div.</p>');
+```
+
+### Using the Factory Pattern
+
+You can create instances of `HtmlDom` using a factory pattern, allowing for better dependency management:
 
 ```php
 use AlanVdb\Html\Factory\HtmlDomFactory;
 
 $factory = new HtmlDomFactory();
-$dom = $factory->createHtmlDom('<div><p>Hello World</p></div>');
-
-$element = $dom->querySelector('p');
-echo $element->getInnerHtml(); // Outputs: Hello World
+$dom = $factory->createHtmlDom('<div>Hello Factory!</div>');
 ```
 
-## API Documentation
+## Running Tests
 
-### HtmlDom
-
-#### Methods
-
-- `getElementById(string $id): HtmlDomElementInterface`
-  - Retrieves an element by its ID.
-
-- `getElementsByClassName(string $className): array`
-  - Retrieves all elements with the specified class name.
-
-- `getElementsByTagName(string $tagName): array`
-  - Retrieves all elements with the specified tag name.
-
-- `querySelector(string $selector): HtmlDomElementInterface`
-  - Retrieves the first element that matches the specified CSS selector.
-
-- `querySelectorAll(string $selector): array`
-  - Retrieves all elements that match the specified CSS selector.
-
-- `createElement(string $tagName): HtmlDomElementInterface`
-  - Creates a new element with the specified tag name.
-
-### HtmlDomElement
-
-#### Methods
-
-- `appendChild(HtmlDomElementInterface $child): self`
-  - Appends a child element to the current element.
-
-- `insertBefore(HtmlDomElementInterface $newNode, HtmlDomElementInterface $referenceNode): self`
-  - Inserts a new node before the reference node.
-
-- `getInnerHtml(): string`
-  - Gets the inner HTML of the element.
-
-- `insertAdjacentHTML(string $position, string $html): self`
-  - Inserts HTML at the specified position relative to the current element.
-
-- `setAttribute(string $name, string $value): self`
-  - Sets an attribute on the element.
-
-- `getAttribute(string $name): string`
-  - Gets the value of an attribute on the element.
-
-- `removeAttribute(string $name): self`
-  - Removes an attribute from the element.
-
-- `addClass(string $className): self`
-  - Adds a class to the element.
-
-- `removeClass(string $className): self`
-  - Removes a class from the element.
-
-- `toggleClass(string $className): self`
-  - Toggles a class on the element.
-
-- `remove()`
-  - Removes the current element from the DOM.
-
-- `getParent(): ?HtmlDomElementInterface`
-  - Gets the parent element of the current element.
-
-- `getChildNodes(): array`
-  - Gets the child nodes of the current element.
-
-- `getFirstChild(): ?HtmlDomElementInterface`
-  - Gets the first child of the current element.
-
-- `getLastChild(): ?HtmlDomElementInterface`
-  - Gets the last child of the current element.
-
-- `getNextSibling(): ?HtmlDomElementInterface`
-  - Gets the next sibling of the current element.
-
-- `getPreviousSibling(): ?HtmlDomElementInterface`
-  - Gets the previous sibling of the current element.
-
-### HtmlDomFactory
-
-#### Methods
-
-- `createHtmlDom(string $htmlContent): HtmlDomInterface`
-  - Creates a new instance of `HtmlDom` with the provided HTML content.
-
-## Testing
-
-To run the tests, use the following command:
+To run the tests, you need to install the development dependencies first:
 
 ```bash
-vendor/bin/phpunit
+composer install --dev
 ```
 
-The tests are located in the `tests` directory and cover the functionality of `HtmlDom`, `HtmlDomElement`, and `HtmlDomFactory`.
+Then, you can run the tests using PHPUnit:
+
+```bash
+vendor/bin/phpunit --testdox
+```
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-## Contributing
-
-Contributions are welcome! Please submit a pull request or open an issue to discuss any changes or improvements.
-
----
-
-Ce README couvre tous les aspects essentiels de votre bibliothèque, y compris l'installation, l'utilisation, la documentation de l'API, les tests, et les informations sur la licence et les contributions.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

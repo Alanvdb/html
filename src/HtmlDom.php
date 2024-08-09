@@ -7,6 +7,7 @@ use AlanVdb\Html\Definition\HtmlDomElementInterface;
 use AlanVdb\Html\Common\HtmlDomQueryTrait;
 use Exception;
 use DOMDocument;
+use DomElement;
 use DOMXPath;
 
 class HtmlDom implements HtmlDomInterface
@@ -37,16 +38,15 @@ class HtmlDom implements HtmlDomInterface
      * Retrieves an element by its ID.
      *
      * @param string $id The ID of the element to retrieve.
-     * @return HtmlDomElementInterface The element with the specified ID.
-     * @throws Exception If no element with the given ID is found.
+     * @return HtmlDomElementInterface|null The element with the specified ID.
      */
-    public function getElementById(string $id): HtmlDomElementInterface
+    public function getElementById(string $id): ?HtmlDomElementInterface
     {
         $element = $this->dom->getElementById($id);
         if ($element) {
             return new HtmlDomElement($element);
         }
-        throw new Exception("Element with ID '$id' not found.");
+        return null;
     }
 
     /**
@@ -96,9 +96,9 @@ class HtmlDom implements HtmlDomInterface
     /**
      * Returns the root DOMNode (the entire document).
      *
-     * @return \DOMNode
+     * @return DomElement
      */
-    protected function getElement(): \DOMNode
+    protected function getElement(): DomElement
     {
         return $this->dom->documentElement;
     }

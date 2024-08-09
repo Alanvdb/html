@@ -8,15 +8,32 @@ use DOMXPath;
 use DOMNode;
 use Exception;
 
+/**
+ * Trait HtmlDomQueryTrait
+ *
+ * Provides common query functionalities for HTML DOM elements using XPath.
+ */
 trait HtmlDomQueryTrait
 {
     protected DOMXPath $xpath;
 
-    public function setXPath(DOMXPath $xpath)
+    /**
+     * Sets the DOMXPath instance used for querying the DOM.
+     *
+     * @param DOMXPath $xpath The DOMXPath instance.
+     */
+    public function setXPath(DOMXPath $xpath): void
     {
         $this->xpath = $xpath;
     }
 
+    /**
+     * Converts a CSS selector into an XPath query.
+     *
+     * @param string $selector The CSS selector.
+     * @return string The corresponding XPath query.
+     * @throws Exception If the selector format is not supported.
+     */
     protected function cssToXPath(string $selector): string
     {
         if (preg_match('/^#([\w\-]+)$/', $selector, $matches)) {
@@ -30,6 +47,13 @@ trait HtmlDomQueryTrait
         }
     }
 
+    /**
+     * Queries the DOM for the first element matching the specified CSS selector.
+     *
+     * @param string $selector The CSS selector.
+     * @return HtmlDomElementInterface|null The matching element, or null if not found.
+     * @throws Exception If no element matching the selector is found.
+     */
     public function querySelector(string $selector): ?HtmlDomElementInterface
     {
         $xpathQuery = $this->cssToXPath($selector);
@@ -40,6 +64,12 @@ trait HtmlDomQueryTrait
         return new HtmlDomElement($elements->item(0));
     }
 
+    /**
+     * Queries the DOM for all elements matching the specified CSS selector.
+     *
+     * @param string $selector The CSS selector.
+     * @return HtmlDomElementInterface[] An array of matching elements.
+     */
     public function querySelectorAll(string $selector): array
     {
         $xpathQuery = $this->cssToXPath($selector);
@@ -55,10 +85,10 @@ trait HtmlDomQueryTrait
     }
 
     /**
-     * Cette méthode doit être implémentée par les classes utilisant ce trait.
-     * Elle doit retourner le nœud DOM (DOMNode) associé à l'objet courant.
+     * Must be implemented by the class using this trait.
+     * Should return the DOMNode associated with the current object.
      *
-     * @return DOMNode
+     * @return DOMNode The associated DOMNode.
      */
     abstract protected function getElement(): DOMNode;
 }

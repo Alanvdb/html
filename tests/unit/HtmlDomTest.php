@@ -52,9 +52,7 @@ class HtmlDomTest extends TestCase
 
     public function testGetElementByIdNotFound(): void
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage("Element with ID 'unknown' not found.");
-        $this->dom->getElementById('unknown');
+        $this->assertNull($this->dom->getElementById('unknown'));
     }
 
     public function testGetElementsByClassName(): void
