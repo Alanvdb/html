@@ -44,7 +44,7 @@ trait HtmlDomQueryTrait
         elseif (preg_match('/^\.([\w\-]+)$/', $selector, $matches)) {
             return ".//*[contains(concat(' ', normalize-space(@class), ' '), ' {$matches[1]} ')]";
         }
-        // Handle attribute selectors (e.g., a[href*="artist"])
+        // Handle attribute selectors with various operators
         elseif (preg_match('/^([\w\-]+)\[([^\]]+)\]$/', $selector, $matches)) {
             $tagName = $matches[1];
             $attributeSelector = $matches[2];
@@ -56,6 +56,14 @@ trait HtmlDomQueryTrait
             // Handle attribute exact match selector (e.g., [href="artist"])
             elseif (preg_match('/([\w\-]+)="([^"]*)"/', $attributeSelector, $attrMatches)) {
                 return ".//{$tagName}[@{$attrMatches[1]}='{$attrMatches[2]}']";
+            }
+            // Handle attribute starts with selector (e.g., [href^="artist"])
+            elseif (preg_match('/([\w\-]+)\^="?([^"]*)"?/', $attributeSelector, $attrMatches)) {
+                return ".//{$tagName}[starts-with(@{$attrMatches[1]}, '{$attrMatches[2]}')]";
+            }
+            // Handle attribute ends with selector (e.g., [href$="artist"])
+            elseif (preg_match('/([\w\-]+)\$="?([^"]*)"?/', $attributeSelector, $attrMatches)) {
+                return ".//{$tagName}[substring(@{$attrMatches[1]}, string-length(@{$attrMatches[1]}) - string-length('{$attrMatches[2]}') + 1) = '{$attrMatches[2]}']";
             }
             // Handle attribute exists selector (e.g., [href])
             elseif (preg_match('/([\w\-]+)$/', $attributeSelector, $attrMatches)) {
@@ -69,6 +77,7 @@ trait HtmlDomQueryTrait
     
         throw new Exception("Unsupported selector format: $selector");
     }
+    
     
 
     /**
