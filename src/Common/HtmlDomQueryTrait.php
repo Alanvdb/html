@@ -36,16 +36,40 @@ trait HtmlDomQueryTrait
      */
     protected function cssToXPath(string $selector): string
     {
+        // Handle ID selectors
         if (preg_match('/^#([\w\-]+)$/', $selector, $matches)) {
             return ".//*[@id='{$matches[1]}']";
-        } elseif (preg_match('/^\.([\w\-]+)$/', $selector, $matches)) {
-            return ".//*[contains(concat(' ', normalize-space(@class), ' '), ' {$matches[1]} ')]";
-        } elseif (preg_match('/^[\w\-]+$/', $selector)) {
-            return ".//{$selector}";
-        } else {
-            throw new Exception("Unsupported selector format: $selector");
         }
+        // Handle class selectors
+        elseif (preg_match('/^\.([\w\-]+)$/', $selector, $matches)) {
+            return ".//*[contains(concat(' ', normalize-space(@class), ' '), ' {$matches[1]} ')]";
+        }
+        // Handle attribute selectors (e.g., a[href*="artist"])
+        elseif (preg_match('/^([\w\-]+)\[([^\]]+)\]$/', $selector, $matches)) {
+            $tagName = $matches[1];
+            $attributeSelector = $matches[2];
+    
+            // Handle attribute contains selector (e.g., [href*="artist"])
+            if (preg_match('/([\w\-]+)\*="?([^"]*)"?/', $attributeSelector, $attrMatches)) {
+                return ".//{$tagName}[contains(@{$attrMatches[1]}, '{$attrMatches[2]}')]";
+            }
+            // Handle attribute exact match selector (e.g., [href="artist"])
+            elseif (preg_match('/([\w\-]+)="([^"]*)"/', $attributeSelector, $attrMatches)) {
+                return ".//{$tagName}[@{$attrMatches[1]}='{$attrMatches[2]}']";
+            }
+            // Handle attribute exists selector (e.g., [href])
+            elseif (preg_match('/([\w\-]+)$/', $attributeSelector, $attrMatches)) {
+                return ".//{$tagName}[@{$attrMatches[1]}]";
+            }
+        }
+        // Handle tag name selectors
+        elseif (preg_match('/^[\w\-]+$/', $selector)) {
+            return ".//{$selector}";
+        }
+    
+        throw new Exception("Unsupported selector format: $selector");
     }
+    
 
     /**
      * Queries the DOM for the first element matching the specified CSS selector.
